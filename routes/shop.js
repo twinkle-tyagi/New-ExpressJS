@@ -14,6 +14,8 @@ router.get('/products/:productId',shopController.getProduct);  // : tells expres
 // if we have any specific route, like /products/delete, the we have to put route having : at the end, as expressJS will encounter this and handle it and control will not reach /delete route. 
 router.get('/cart', shopController.getCart);
 
+router.post('/cart', shopController.postCart);
+
 router.get('/orders', shopController.getOrders);
 
 router.get('/checkout', shopController.getCheckout);
