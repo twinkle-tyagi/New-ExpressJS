@@ -1,6 +1,7 @@
 const Product = require('../models/product');
 const Cart = require('../models/cart.js');
 
+/*
 exports.getProducts = (req, res, next) => {
   Product.fetchAll(products => {
     res.render('shop/product-list', {
@@ -10,7 +11,11 @@ exports.getProducts = (req, res, next) => {
     });
   });
 };
+*/
 
+
+
+/*
 exports.getProduct = (req, res, next) => {
   const prodId = req.params.productId;  // to get product id
   //console.log(prodId);
@@ -24,7 +29,9 @@ exports.getProduct = (req, res, next) => {
   });
   //res.redirect('/');
 };
+*/
 
+/*
 exports.getIndex = (req, res, next) => {
   Product.fetchAll(products => {
     res.render('shop/index', {
@@ -32,6 +39,54 @@ exports.getIndex = (req, res, next) => {
       pageTitle: 'Shop',
       path: '/'
     });
+  });
+};
+*/
+
+//Using DATABASE
+
+exports.getProduct = (req, res, next) => {
+  const prodId = req.params.productId;  
+  
+  Product.findById(prodId).then(([prod]) => {
+    
+    res.render('shop/product-detail', 
+    { product: prod[0], 
+    pageTitle: prod.title,
+    path: '/products'
+  })
+})
+  .catch(err => {
+    console.log(err);
+  });
+};
+
+exports.getProducts = (req, res, next) => {
+  Product.fetchAll()
+  .then(([rows, fieldData]) => {
+    res.render('shop/product-list', {
+      prods: rows,
+      pageTitle: 'All Products',
+      path: '/products'
+    })
+    
+  });
+};
+
+
+
+exports.getIndex = (req, res, next) => {
+  Product.fetchAll()
+  .then(([rows, fieldData]) => { //rows and filedata are simply index-0(arr[0]), index-1(arr[1]) of array
+    
+    res.render('shop/index', {
+      prods: rows,  // rows conatins the product data
+      pageTitle: 'Shop',
+      path: '/'
+    });
+  })
+  .catch(err => {
+    console.log(err);
   });
 };
 

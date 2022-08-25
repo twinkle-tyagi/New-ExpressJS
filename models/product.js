@@ -1,3 +1,5 @@
+// Now we start to work on database so we do not need files and we will comment those code.
+/*
 const fs = require('fs');
 const path = require('path');
 
@@ -75,5 +77,40 @@ module.exports = class Product {
       cb(product); // callback with product to sync
     });
 
+  }
+};
+*/
+
+const db = require('../util/database');
+
+const Cart = require('./cart');
+
+module.exports = class Product {
+  constructor(id, title, imageUrl, description, price) {
+    this.id = id;
+    this.title = title;
+    this.imageUrl = imageUrl;
+    this.description = description;
+    this.price = price;
+  }
+
+  save() {
+    // id will be taken automatically
+    // we are doing like this to avoid SQL Injection attack.
+    // question marks corresponds to value we want to enter, second argument of executes is an array that contains actual values we want to insert.
+    //SQL will parse our data for hidden SQL commands and removes them. (An added layer of security)
+    return db.execute('INSERT INTO products (title, price, description, imageUrl) VALUES (?, ?, ?, ?)', [this.title, this.price, this.description, this.imageUrl]); 
+  }
+
+  static delete(id) {
+    
+  }
+
+  static fetchAll() {
+    return db.execute('SELECT * FROM products'); // we return this promise to use somewhere else
+  }
+
+  static findById(id) {
+    return db.execute('SELECT * FROM products WHERE products.id = ?', [id]);
   }
 };

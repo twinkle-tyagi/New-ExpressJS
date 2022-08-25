@@ -13,4 +13,4 @@ const pool = mysql.createPool({
     password: 'admin' //password we use during installation
 }); 
 
-module.exports = pool.promise(); // we use promise while exporting our pool, because promise handles async task and are more structured than callbacks
+module.exports = pool.promise(); // we use promise while exporting our pool, because promise handles async task and are more structured than callbacks.
