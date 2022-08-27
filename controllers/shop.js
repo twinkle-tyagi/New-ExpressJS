@@ -1,4 +1,4 @@
-const Product = require('../models/product');
+const Product = require('../models/product.js');
 const Cart = require('../models/cart.js');
 
 /*
@@ -45,9 +45,39 @@ exports.getIndex = (req, res, next) => {
 
 //Using DATABASE
 
+// to access single product when we click details
 exports.getProduct = (req, res, next) => {
   const prodId = req.params.productId;  
   
+  // using sequelize
+Product.findAll({where: {id: prodId}}) // findAll gives array,
+.then(products => {
+  res.render('shop/product-detail', { 
+    product: products[0],              // as our data is the first element 
+    pageTitle: products[0].title,
+    path: '/products'
+  });
+})
+.catch(err => {
+  console.log(err);
+});
+
+/* second way
+  Product.findById(prodId)
+  .then(product => {    // there is in-built function findById in sequelize that we can use, but it doesnot returns an array but a single product
+
+    res.render('shop/product-detail', { 
+    product: product, 
+    pageTitle: product.title,
+    path: '/products'
+  });
+})
+  .catch(err => {
+    console.log(err);
+  });
+  */
+
+  /*
   Product.findById(prodId).then(([prod]) => {
     
     res.render('shop/product-detail', 
@@ -59,9 +89,23 @@ exports.getProduct = (req, res, next) => {
   .catch(err => {
     console.log(err);
   });
+  */
 };
 
+// to access all products
 exports.getProducts = (req, res, next) => {
+
+  Product.findAll()
+  .then( products => {   // using SEQUELIZE
+    res.render('shop/product-list', {
+      prods: products,
+      pageTitle: 'All Products',
+      path: '/products'
+    });
+  }).catch(err => {
+    console.log(err);
+  });
+  /*
   Product.fetchAll()
   .then(([rows, fieldData]) => {
     res.render('shop/product-list', {
@@ -69,13 +113,25 @@ exports.getProducts = (req, res, next) => {
       pageTitle: 'All Products',
       path: '/products'
     })
-    
   });
+  */
 };
 
 
 
 exports.getIndex = (req, res, next) => {
+  Product.findAll()
+  .then( products => {   // using SEQUELIZE
+    res.render('shop/index', {
+      prods: products,  // rows conatins the product data
+      pageTitle: 'Shop',
+      path: '/'
+    });
+  }).catch(err => {
+    console.log(err);
+  });
+  
+  /*  DATABASE WAY
   Product.fetchAll()
   .then(([rows, fieldData]) => { //rows and filedata are simply index-0(arr[0]), index-1(arr[1]) of array
     
@@ -88,6 +144,7 @@ exports.getIndex = (req, res, next) => {
   .catch(err => {
     console.log(err);
   });
+  */
 };
 
 exports.postCart = (req, res, next) => {

@@ -1,6 +1,7 @@
 const fs = require('fs');
 const path = require('path');
 
+
 const p = path.join (
     path.dirname(process.mainModule.filename),
     'data',
@@ -41,5 +42,24 @@ module.exports = class Cart {
         });
     });
     }
- 
+
+    static deleteProduct(id, productPrice) {
+        s.readFile(p, (err, fileContent) => {
+            if(err) {
+                return;
+            }
+
+            const updatedCart = {...fileContent};
+            const product = updatedCart.products.findIndex(prod => prod.id === id);
+            //update cart items and price.
+            // there can be more than one instance of an item in cart, so we get quantity first, then update price.
+            productQty = product.qty;
+            updatedCart.products = updatedCart.products.filter(prod => prod.id !== id);
+            updatedCart.totalPrice = cart.totalPrice - productPrice*productQty;
+            //update
+            fs.writeFile(p, JSON.stringify(cart), err => {
+                console.log(err);
+            });
+    });
+}
 }

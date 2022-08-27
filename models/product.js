@@ -1,7 +1,10 @@
 // Now we start to work on database so we do not need files and we will comment those code.
+
 /*
 const fs = require('fs');
 const path = require('path');
+
+const Cart = require('./cart');
 
 const p = path.join(
   path.dirname(process.mainModule.filename),
@@ -49,7 +52,7 @@ module.exports = class Product {
       }
     });
   }
-
+/* My way
   static delete(id) {
     getProductsFromFile(prods => {
       const updatedProd = [];
@@ -63,6 +66,24 @@ module.exports = class Product {
           console.log(err);
         })
       });
+  }
+
+
+  // UDEMY way
+
+  static deleteById() {
+    getProductsFromFile(products => {
+      const product = products.find(prod => prod.id === id);
+      const updatedProducts = products.filter(prod => prod.id !== id);
+      //filter will filter according to criteria. here if id is not equal then item is kept otherwise item is left.
+
+      fs.writeFile(p, JSON.stringify(updatedProducts), err => {
+        // if no error then we have to delete product from cart also,
+        if(!err) {
+          Cart.deleteProduct(id, product.price);
+        }
+      });
+    })
   }
 
   static fetchAll(cb) {
@@ -80,6 +101,9 @@ module.exports = class Product {
   }
 };
 */
+
+/*
+// DATABSE MsSql
 
 const db = require('../util/database');
 
@@ -103,7 +127,7 @@ module.exports = class Product {
   }
 
   static delete(id) {
-    
+    return db.execute('DELETE FROM products WHERE products.id = ?', [id]);
   }
 
   static fetchAll() {
@@ -114,3 +138,37 @@ module.exports = class Product {
     return db.execute('SELECT * FROM products WHERE products.id = ?', [id]);
   }
 };
+*/
+
+// using Sequelize
+
+const { DECIMAL } = require('sequelize');
+const Sequelize = require('sequelize');
+
+const sequelize = require('../util/database');
+
+// define has parameters, first is function name. 
+// Second is JS object which define structure of our model and our automatically created DB. 
+const Product = sequelize.define('product', {
+  id: {                         // first field in DB is id, id may have some attributes, so we represent it as JS object.
+    type: Sequelize.INTEGER,    // id type is integer.
+    autoIncrement: true,
+    allowNull: false,
+    primaryKey: true
+  },
+  title: Sequelize.STRING,      // to make it string type.
+  price: {
+    type: Sequelize.DOUBLE,
+    allowNull: false
+  },
+  imageUrl: {
+    type: Sequelize.STRING,
+    allowNull: false
+  },
+  description: {
+    type: Sequelize.STRING,
+    allowNull: false
+  }
+});
+
+module.exports = Product;
