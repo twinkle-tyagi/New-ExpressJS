@@ -147,7 +147,7 @@ const Sequelize = require('sequelize');
 
 const sequelize = require('../util/database');
 
-// define has parameters, first is function name. 
+// define has parameters, first is table name. 
 // Second is JS object which define structure of our model and our automatically created DB. 
 const Product = sequelize.define('product', {
   id: {                         // first field in DB is id, id may have some attributes, so we represent it as JS object.
