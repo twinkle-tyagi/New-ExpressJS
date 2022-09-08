@@ -10,13 +10,16 @@ const sequelize = require('./util/database');
 const Product = require('./models/product');
 const User = require('./models/user');
 
+const adminRoutes = require('./routes/admin');
+const shopRoutes = require('./routes/shop');
+const Cart = require('./models/cart');
+const cartItem = require('./models/cart-item');
+
 const app = express();
 
 app.set('view engine', 'ejs');
 app.set('views', 'views');
 
-const adminRoutes = require('./routes/admin');
-const shopRoutes = require('./routes/shop');
 //to define model of product and user
 
 /* //sample code
@@ -36,7 +39,7 @@ app.use((req, res, next) => {
     User.findByPk(1)
     .then(user => {
         req.user = user; //  to add user field in request
-        console.log(user);
+        //console.log(user);
         next();
     })
     .catch(err => {
@@ -57,12 +60,20 @@ Product.belongsTo(User, {
 });
 
 User.hasMany(Product);
+User.hasOne(Cart);
+Cart.belongsTo(User);
+Cart.belongsToMany(Product, {through: cartItem}); 
+//there's a many to many relation between cart and product, this only works with intermediate table that connects both, which store combination of productIds and cartIds
+// for that we created cartItem model.
+// We add second argument through key, defining where keys are stored,which is in cartItem
+Product.belongsToMany(Cart, {through: cartItem});
 
 //make a new middleware to get user from databse
 
 //sync your data to DB by creating appropriate table in DB.
 //sequelize.sync()  // data will not reflect as we added new constaints, to make changed to DB is should use force.
-//sequelize.sync({force: true})     we do not want to do it evrytime, just once.
+
+//sequelize.sync({force: true})     //we do not want to do it evrytime, just once.
 /*
 Sequelize.sync()
 .then(result => {
@@ -93,6 +104,9 @@ sequelize.sync()
 })
 .then(user => {
     //console.log(user);
+    user.createCart(); // to create a cart
+})
+.then(cart => {
     app.listen(3000);
 })
 .catch(err => {
