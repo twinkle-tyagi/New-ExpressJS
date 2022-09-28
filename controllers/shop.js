@@ -2,6 +2,8 @@ const Product = require('../models/product.js');
 const Cart = require('../models/cart.js');
 const CartItem = require('../models/cart-item.js');
 
+const ITEMS_PER_PAGE = 2;
+
 /*
 exports.getProducts = (req, res, next) => {
   Product.fetchAll(products => {
@@ -95,7 +97,14 @@ Product.findAll({where: {id: prodId}}) // findAll gives array,
 
 // to access all products
 exports.getProducts = (req, res, next) => {
+  
+  Product.findAll()
+  .then(result => {
+    return res.json(result);
+  })
+  .catch(err => console.log(err));
 
+/*
   Product.findAll()
   .then( products => {   // using SEQUELIZE
     res.render('shop/product-list', {
@@ -106,6 +115,7 @@ exports.getProducts = (req, res, next) => {
   }).catch(err => {
     console.log(err);
   });
+*/
   /*
   Product.fetchAll()
   .then(([rows, fieldData]) => {
@@ -121,7 +131,61 @@ exports.getProducts = (req, res, next) => {
 
 
 exports.getIndex = (req, res, next) => {
-  Product.findAll()
+  const page = +req.query.page || 1;    // for pagination + is added to make it number
+  // buttons are hard coded, make then add automatically as we add more products
+
+  console.log("==========================............................"+req.query.page);
+  let totalItems;
+
+  Product
+  .count()     // to count no of products
+  .then(numProducts => {
+    //console.log("=============================================="+numProducts);
+    totalItems = numProducts;   // will store count of products
+    return Product.findAll({offset:(page-1)*ITEMS_PER_PAGE, limit: 2});
+  })
+  /*
+  .then( products => {   // using SEQUELIZE
+    res.render('shop/index', {
+      prods: products,  // rows conatins the product data
+      pageTitle: 'Shop',
+      path: '/',
+      //totalProducts: totalItems,  // we will also render total products
+      currentPage: page, // to always get current page
+      hasNextPage: ITEMS_PER_PAGE * page < totalItems,  // which show that we have next page or not, if total items are greater than page*items_per_page, then for rest of products we must have next page
+      hasPreviousPage: page > 1,      // to show if we have a previous page, if page is greater than 1 than there is a previous page.
+      nextPage: page + 1,
+      previousPage: page - 1,
+      lastPage: Math.ceil(totalItems / ITEMS_PER_PAGE)    //last page
+    });
+  })
+  */
+  .then(products => {
+    var obj = {
+      products: products,
+      currentPage: page,
+      hasNextPage: ITEMS_PER_PAGE * page < totalItems,
+      hasPreviousPage: page > 1,
+      nextPage: page + 1,
+      previousPage: page - 1,
+      lastPage: Math.ceil(totalItems / ITEMS_PER_PAGE)
+    }
+    ///console.log(",,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,");
+    //console.log(obj.products);
+    return res.json(obj);
+  })
+
+  .catch(err => {
+    console.log(err);
+  });
+
+  /*
+  // we use offset and limit in sequelize instead of skip and limit
+  Product.findAll({offset:(page-1)*ITEMS_PER_PAGE, limit: 2})
+  //.skip((page-1)*ITEMS_PER_PAGE)   //skip lets us skip given number of queries.
+  // here we are doing page-1 to get page and then multiply by no of items per page to get those items only
+  //.limit(ITEMS_PER_PAGE)    //limits us to fetch only those no of items.
+  
   .then( products => {   // using SEQUELIZE
     res.render('shop/index', {
       prods: products,  // rows conatins the product data
@@ -131,6 +195,7 @@ exports.getIndex = (req, res, next) => {
   }).catch(err => {
     console.log(err);
   });
+
   
   /*  DATABASE WAY
   Product.fetchAll()
@@ -149,7 +214,10 @@ exports.getIndex = (req, res, next) => {
 };
 
 exports.postCart = (req, res, next) => {
-  const prodId = req.body.productId;
+  console.log("=====================================================");
+  //console.log(req);
+  const prodId = req.body.prodID;
+  //const title = req.body.title;
   /*
   // get information of product, then add to cart.
   Product.findByPk(prodId, (product) => {
@@ -166,12 +234,15 @@ exports.postCart = (req, res, next) => {
   //1. check if product is in cart or not. If in cart then we need to just increase quantity.
   fetchedCart = cart;   // to get cart and use it everywhere.
   return cart.getProducts({where: {id: prodId}} );   // returns array of products, where first element if the product with prodId
+  //return cart.getProducts({where: {title: title}});
 })
 .then(products => {    //2. here we get array of products with our product on index 0 (if it exist) 
   let product;
   if(products.length > 0) {
     product = products[0];
   }
+
+  console.log(products);
 
   if(product) {   //if product there we need to access its previous qunatity and update it
     const oldQuantity = product.cartItem.quantity;
@@ -182,6 +253,7 @@ exports.postCart = (req, res, next) => {
 
   // if product not found in cart, means new product is added in cart.
   return Product.findByPk(prodId)
+  //return Product.findByPk(title)
   //.then(product => {
     //return fetchedCart.addProduct(product, { through: {quantity: newQuantity}} );    // addProduct is magic method added by sequelize
     // we need to update quantity so we send it as second argument using through, and set quantity as newQuantity.
@@ -193,7 +265,9 @@ exports.postCart = (req, res, next) => {
     })
 })
 .then(() => {
-  res.redirect('/cart');
+  //res.redirect('/cart');
+  res.status(200).json({success: true, quantity: newQuantity});
+
 })
  .catch(err => console.log(err));
 };
@@ -257,16 +331,47 @@ exports.getCart = (req, res, next) => {
 */
 
 exports.getCart = (req, res, next) => {
+
+  var page = +req.query.page || 1;
+
+  const ITEM_PER_PAGE = 2;
+  var totalItems = 0;
+
   console.log(req.user.cart);
   req.user.getCart()          // to get access to cart
   .then(cart => {
-    return cart.getProducts()  //magic method getProducts()
-    .then( products => {        // will contain products
+    //console.log("----------------------------");
+    //console.log(JSON.stringify(cart))
+
+    Cart
+    .count()
+    .then(counts => {
+      totalItems = counts;
+      console.log(cart);
+      return cart.getProducts({offset:(page-1)*ITEM_PER_PAGE, limit: ITEM_PER_PAGE})  //magic method getProducts()
+    })
+
+  .then( products => {        // will contain products
+      /*
       res.render('shop/cart', {
         path: '/cart',
         pageTitle: 'Your Cart',
         products: products
       });
+      */
+     //console.log(JSON.stringify(products)); 
+
+     var productsObj = {
+      products: products,
+      previousPage: page - 1,
+      currentPage: page,
+      nextPage: page + 1,
+      lastPage: Math.ceil(totalItems / ITEM_PER_PAGE),
+      hasPreviousPage: page > 1,
+      hasNextPage: page * ITEMS_PER_PAGE < totalItems
+     }
+
+      return res.json(productsObj);
     })
     .catch(err => console.log(err));
     //console.log(cart);

@@ -2,6 +2,7 @@ const path = require('path');
 
 const express = require('express');
 const bodyParser = require('body-parser');
+const cors = require('cors');
 
 const errorController = require('./controllers/error');
 
@@ -31,8 +32,9 @@ db.execute('SELECT * FROM products')    //
     console.log(err);
 });
 */ 
-
-app.use(bodyParser.urlencoded({ extended: false }));
+app.use(cors());
+//app.use(bodyParser.urlencoded({ extended: false }));  // to read non-json format
+app.use(bodyParser.json());     //to read json file
 app.use(express.static(path.join(__dirname, 'public')));
 
 app.use((req, res, next) => {
