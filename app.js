@@ -15,6 +15,8 @@ const adminRoutes = require('./routes/admin');
 const shopRoutes = require('./routes/shop');
 const Cart = require('./models/cart');
 const cartItem = require('./models/cart-item');
+const Order = require('./models/order');
+const OrderItem = require('./models/order-Item');
 
 const app = express();
 
@@ -69,6 +71,9 @@ Cart.belongsToMany(Product, {through: cartItem});
 // for that we created cartItem model.
 // We add second argument through key, defining where keys are stored,which is in cartItem
 Product.belongsToMany(Cart, {through: cartItem});
+Order.belongsTo(User);
+User.hasMany(Order);
+Order.belongsToMany(Product, {through: OrderItem});
 
 //make a new middleware to get user from databse
 

@@ -76,10 +76,6 @@ const Cart = sequelize.define('cart', {
         allowNull: false,
         primaryKey: true
     },
-    title: Sequelize.STRING,
-    imgUrl: Sequelize.STRING,
-    price: Sequelize.INTEGER,
-    quantity: Sequelize.INTEGER
 });
 
 module.exports = Cart;

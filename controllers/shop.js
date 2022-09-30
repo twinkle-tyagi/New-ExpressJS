@@ -1,6 +1,6 @@
 const Product = require('../models/product.js');
 const Cart = require('../models/cart.js');
-const CartItem = require('../models/cart-item.js');
+const Order = require('../models/order');
 
 const ITEMS_PER_PAGE = 2;
 
@@ -352,7 +352,7 @@ exports.getCart = (req, res, next) => {
     })
 
   .then( products => {        // will contain products
-      /*
+       /*
       res.render('shop/cart', {
         path: '/cart',
         pageTitle: 'Your Cart',
@@ -372,6 +372,7 @@ exports.getCart = (req, res, next) => {
      }
 
       return res.json(productsObj);
+
     })
     .catch(err => console.log(err));
     //console.log(cart);
@@ -382,11 +383,62 @@ exports.getCart = (req, res, next) => {
 };
 
 exports.getOrders = (req, res, next) => {
-  res.render('shop/orders', {
-    path: '/orders',
-    pageTitle: 'Your Orders'
-  });
+
+  // getOrders is magic method added by sequelize, because of our association in table
+  req.user.getOrders({include: ['products']}) //eager loading  // we use products, because table name in mysql adds s in last so product is products    
+  //it tells sequelize to fetch product also while fetching order, and give back one array of orders that also contains products per order
+  .then(orders => {
+    //console.log(orders);
+
+    res.json(orders);
+    /*
+    res.render('shop/orders', {
+      path: '/orders',
+      pageTitle: 'Your Order',
+      orders: orders
+    });
+    */
+  })
+  .catch(err => console.log(err));
 };
+
+
+// When user hits purchase button - 2 steps.
+// step 1. save to order table
+// step 2. clear the cart
+exports.postOrder = (req, res, next) => {
+  let fetchedCart;
+  
+  req.user.getCart()
+  .then(cart => {
+    fetchedCart = cart;   //first get the cart to clear.
+    return cart.getProducts();
+  })
+  .then(products => {
+    return req.user.createOrder()
+    .then( order => {
+      //order.addProducts(products, {through: {quantity}}) //but different items may have different quantity so we will use another approach
+      return order.addProducts(products.map(product => {
+        //property of sequelize, orderItem name must be same as the table name in order-item.js
+        product.orderItem = {quantity: product.cartItem.quantity}   // to get quantity from product object, quantity is stored in cartItem array in product object.
+        //above code will add quantity to each product
+        return product;
+      }));
+    })
+    .catch(err => console.log(err));
+    //console.log(products);
+  })
+  .then(result => {
+    //clear the fetchedCart
+    return fetchedCart.setProducts(null); // setProducts method will set value for all cart products, 
+    //here we are setting it to null, so cart table will become empty. 
+  })
+  .then(result => {
+    res.redirect('/orders');
+  })
+  .catch(err => console.log(err));
+}
+
 
 exports.getCheckout = (req, res, next) => {
   res.render('shop/checkout', {
