@@ -21,9 +21,23 @@ module.exports = pool.promise(); // we use promise while exporting our pool, bec
 const Sequelize = require('sequelize');
 
 // first three parameter is necessary, forth is optional.
+
 const sequelize = new Sequelize('node-complete', 'root', 'admin', {
     dialect: 'mysql', 
     host: 'localhost'
 });
+
+
+// ---------------  GOING LIVE on AWS --------------
+
+// when making project live we save our secrets = passwords and ID's, to .env file
+// after saving to .env file, it have to modify code.
+
+/*
+const sequelize = new Sequelize( process.env.DB_NAME, process.env.DB_USERNAME, process.env.DB_PASSWORD, {
+    dialect: 'mysql',
+    host: process.env.DB_HOST
+});
+*/
 
 module.exports = sequelize;

@@ -4,6 +4,10 @@ const express = require('express');
 const bodyParser = require('body-parser');
 const cors = require('cors');
 
+// install dotenv and import it to use it
+const dotenv = require('dotenv')
+dotenv.config();
+
 const errorController = require('./controllers/error');
 
 //const Sequelize = require('sequelize');
