@@ -1,7 +1,7 @@
 
 
 window.addEventListener('DOMContentLoaded', () => {
-    axios.get('3.90.105.217:3000/orders')
+    axios.get('http://3.90.105.217:3000/orders')
     .then(res => {
         console.log(res);
         for(var i =0; i< res.data.length; i++) {
