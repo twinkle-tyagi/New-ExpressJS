@@ -41,7 +41,14 @@ db.execute('SELECT * FROM products')    //
 app.use(cors());
 //app.use(bodyParser.urlencoded({ extended: false }));  // to read non-json format
 app.use(bodyParser.json());     //to read json file
-app.use(express.static(path.join(__dirname, 'public')));
+//app.use(express.static(path.join(__dirname, 'public')));
+
+// to make dynamic paths
+
+app.use((req, res) => {
+    res.sendFile(path.join(__dirname, `public/${req.url}`));
+});
+
 
 app.use((req, res, next) => {
     User.findByPk(1)

@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>E-Commerce Project</title>
+    <link rel="stylesheet" href="./style.css">
+    
+    <script src="script.js" async></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/1.0.0-alpha.1/axios.min.js"></script>
+</head>
+<body>
+    <div id="ecomm">
+
+        <header>
+            <ul class="header">
+                <li><a href="./index.html">HOME</a></li>
+                <li><a href="#">STORE</a></li>
+                <li><a href="./orders.html">ORDERS</a></li>
+                <li><a href="./about.html">ABOUT</a></li>
+                <a href="#cart" class="cart-holder"> cart <span class="cart-number"> 0 </span> </a>
+            </ul>
+            <h1> The Generics </h1>
+        </header>
+
+        <section id="music" class="container">
+            <h2> MUSIC </h2>
+            <div id="music-content">
+                <!--
+                <div id="album1">
+                    <h3> Album 1</h3>
+                    <div class="img-container">
+                        <img src="panda.jpg" class="prod-images" alt="">
+                    </div>
+                    <div class="prod-details">
+                        <span>$12.99 </span>
+                        <button class="shop-item-button" type="button"> Add to Cart</button>
+                    </div>
+                </div>
+
+                <div id="album2">
+                    <h3> Album 2</h3>
+                    <div class="img-container">
+                        <img src="panda.jpg" class="prod-images" alt="">
+                    </div>
+                    <div class="prod-details">
+                        <span>$10.99 </span>
+                        <button class="shop-item-button" type="button"> Add to Cart</button>
+                    </div>
+                </div>
+
+                <div id="album3">
+                    <h3> Album 3</h3>
+                    <div class="img-container">
+                        <img src="panda.jpg" class="prod-images" alt="">
+                    </div>
+                    <div class="prod-details">
+                        <span>$18.99 </span>
+                        <button class="shop-item-button" type="button"> Add to Cart</button>
+                    </div>
+                </div>
+
+                <div id="album4">
+                    <h3> Album 4</h3>
+                    <div class="img-container">
+                        <img src="panda.jpg" class="prod-images" alt="">
+                    </div>
+                    <div class="prod-details">
+                        <span>$19.99 </span>
+                        <button class="shop-item-button" type="button"> Add to Cart</button>
+                    </div>
+                </div>
+        -->
+            </div>
+            <div id="pagination">
+
+            </div>
+        </section>
+
+        <section id="merch" class="container">
+            <h2> Mercs </h2>
+        <!--    <div id="mercs-content">
+                <div id="t-shirt">
+                    <h3> T-Shirt</h3>
+                    <div class="img-container">
+                        <img src="panda.jpg" class="prod-images" alt="">
+                    </div>
+                    <div class="prod-details">
+                        <span> $120 </span>
+                        <button class="shop-item-button" type="button"> Add to Cart </button>
+                    </div>
+                </div>
+
+                <div id="coffe-cup">
+                    <h3> Coffee Cup</h3>
+                    <div class="img-container">
+                        <img src="panda.jpg" alt="" class="prod-images">
+                    </div>
+                    <div>
+                        <span>$150</span>
+                        <button class="shop-item-button"> Add to Cart</button>
+                    </div>
+                </div>
+            -->
+            </div>
+        </section>
+
+        <section id="cart" class="container">
+            <h2> CART </h2>
+            <button class="cancel"> X </button>
+            <div class="cart-row">
+                <span class="cart-item cart-column"> ITEM </span>
+                <span class="cart-price cart-column"> PRICE </span>
+                <span class="cart-quantity cart-column" name="cart-quantity"> QUANTITY </span>
+            </div>
+            <div class="cart-items" id="cart-items">
+<!--
+                <div class="cart-row">
+                    <span class='cart-item cart-column'>
+                        <img class='cart-img' src="panda.jpg" alt="" width="100" height="100">
+                        <span class="cart-item-title">T-Shirt</span>
+                    </span>
+                    <span class='cart-price cart-column'>$19.99</span>
+                    <span class='cart-quantity cart-column'>
+                        <input class="cart-quantity-input" type="number" value="1">
+                        <button class="btn btn-danger" type="button">REMOVE</button>
+                    </span>
+                </div>
+-->
+            </div>
+            <div id="cartPagination">
+
+            </div>
+
+            <div class="cart-total">
+                <span class="total-title"> Total </span>
+                $<span id="total-value">0</span>
+            </div>
+            <button class="btn btn-primary purchase-button" id="purchase-button" type="button"><a href="./orders.html"></a> PURCHASE </button>
+        </section>
+        <button class="cart-button-add"> <a href="#cart" class="cart-button"> GO TO CART </a></button>
+    </div>
+
+    <div>
+        <footer>
+            <div class="footer-title">
+                The Generics
+            </div>
+            <div class="footer-icons">
+                <ul>
+                    <li><a href="www.youtube.com"><img src="youtube.png"></a></li>
+                    <li><a href="www.spotify.com"><img src="spotify.png"></a></li>
+                    <li><a href="www.facebook.com"><img src="fb.png"></a></li>
+                </ul>
+            </div>
+        </footer>
+    </div>
+    
+</body>
+</html>
