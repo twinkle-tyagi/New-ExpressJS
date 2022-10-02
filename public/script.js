@@ -39,7 +39,7 @@ function ready () {
 
     const page = 1;
 
-    axios.get(`http://localhost:3000/?page=${page}`)
+    axios.get(`3.90.105.217:3000/?page=${page}`)
     .then( res => {
         //console.log("here");
         //console.log(res);
@@ -56,7 +56,7 @@ function ready () {
     .catch(err => console.log(err));
 
 
-    axios.get(`http://localhost:3000/cart/?page=${page}`)
+    axios.get(`3.90.105.217:3000/cart/?page=${page}`)
     .then(res => {
         //console.log(res.data);
         cartPagination(res);
@@ -160,7 +160,7 @@ function addToCartClicked(event, prodID) {
         price: p1,
         quantity: quantity
     }
-    axios.post('http://localhost:3000/cart', {prodID: prodID})
+    axios.post('3.90.105.217:3000/cart', {prodID: prodID})
     .then (res => {
         if(res.status === 200) {
             //console.log(obj);
@@ -230,7 +230,7 @@ function quantityChanged(event) {
         title: event.target.parentElement.parentElement.getElementsByClassName('cart-item-title')[0].innerText,
         newVal: newVal
     };
-    axios.post('http://localhost:3000/postUpdateQty', newValue)
+    axios.post('3.90.105.217:3000/postUpdateQty', newValue)
     .then(resu => {
         updateCartTotal();
     })
@@ -274,7 +274,7 @@ function updateCartTotal() {
 
 function purchaseClicked() {
 
-    axios.post('http://localhost:3000/create-order')
+    axios.post('3.90.105.217:3000/create-order')
     .then( res => {
         alert('Thanks for purchase');
         // when we purchase, cart gets empty, so we will remove the parent of cart-item
@@ -345,7 +345,7 @@ function pagination(res) {
 }
 
 function getProds(page) {
-    axios.get(`http://localhost:3000/?page=${page}`)
+    axios.get(`3.90.105.217:3000/?page=${page}`)
     .then(res => {
         pagination(res);
         for(var i=0; i<res.data.products.length; i++) {
@@ -395,7 +395,7 @@ function cartPagination(res) {
 }
 
 function getCarts(page) {
-        axios.get(`http://localhost:3000/cart/?page=${page}`)
+        axios.get(`3.90.105.217:3000/cart/?page=${page}`)
         .then(res => {
             cartPagination(res);
 
